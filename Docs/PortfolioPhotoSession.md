@@ -6,6 +6,10 @@
 **Unity editor:** `6000.3.9f1` (Unity 6.3 LTS), from `ProjectSettings/ProjectVersion.txt`.
 **Relevant project state:** `Docs/PROJECT_STATE.md`, `AGENTS.md`.
 
+## Photo-session operating rule (updated 1 November 2026)
+
+**Everything needed for the photograph must be arranged STATIC and NON-HOSTILE before capture.** Codex must prepare the scene and **take the first 2–3 screenshots**, not ask the user to time actions. Disable enemy behavior, firing, artillery, tree destruction and live actor movement for the isolated photo fixture. Freeze mech pose/camera/forest and any non-interactive visual effects so the user can inspect and reposition the camera for as long as desired. Existing mech/enemy visuals may serve as stationary props, but not active opponents. Do not globally pause a rendering pipeline that hides forest, VFX or cameras; make an explicit opt-in stage isolated from play. If no graphical Unity session is available, report capture BLOCKED and provide manual static staging steps. Preserve gameplay and original scene. Only use real project assets; no fabricated effects.
+
 ## Objective
 Produce a truthful, striking portfolio hero screenshot showing the **actual detailed Kartikaris mech** within the **actual procedural rolling landscape and dense Synty forest**. The mech should be the visual subject, not hidden inside the first-person cockpit, while the forest clearly communicates the scale and setting.
 
@@ -17,14 +21,14 @@ This is a **photo session**, not authorization to redesign the game's normal cam
 - The normal game is cockpit/first-person-focused. A **separate, opt-in external screenshot camera** or saved capture scene is preferable to changing the gameplay camera.
 - Do not open or save this project using Unity 6000.5; honor the canonical 6000.3.9f1 version.
 
-## Pass 1 — Codex setup and draft frames
+## Pass 1 — Codex static stage setup and first screenshots
 1. Verify `git status` and current branch; read `AGENTS.md`, `Docs/PROJECT_STATE.md`, and this task. Preserve all user-local and scene/prefab/Inspector edits; `git pull --ff-only` only when safe.
 2. Confirm the actual scene/prefabs and available Unity editor (prefer 6000.3.9f1). If graphical Unity isn't available, inspect assets and prepare a **script-only optional capture helper plus exact manual steps**; label screenshots NOT CAPTURED. Do not fabricate images or edit a Unity scene blindly.
 3. Use existing Player mech model (or Enemy mech if it composes better), place an external camera at an attractive **3/4 perspective** with visible full mech silhouette, and keep recognizably forested terrain extending behind it. Prefer foreground/model framing around one-third to one-half of image with convincing depth, shadows and sky.
 4. Offer **2–3 distinct candidate shots** using real project materials/models:
    - **A. Hero:** mech prominent foreground, dense forest and rolling hills background.
    - **B. Scale:** slightly wider scenic angle showing terrain scale and tree density.
-   - **C. Action-ready:** mech posed as if preparing artillery with readable cannon silhouette (only if an actual safe pose exists; do not invent firing or effects).
+   - **C. Static silhouette:** mech safely posed with a readable cannon and forest background, with all simulation and hostile AI disabled in the isolated capture setup.
 5. No Inspector/scene changes in the authoritative scene without user approval. If an opt-in camera prefab, editor menu, runtime capture script or screenshot staging scene is implemented, keep it clearly isolated and disabled by default. Do not inadvertently capture the cockpit-only UI, radar Canvas, debug gizmos or editor toolbars over the exterior shot.
 
 ## Pass 2 — Human visual direction
@@ -47,5 +51,5 @@ This is a **photo session**, not authorization to redesign the game's normal cam
 ## Exact Codex prompt (use when executing this task)
 
 ```text
-Work in Shikirashi/Kartikaris-Unity on main. This is the real legacy Unity mech+forest project, not Kartikaris-Godot. Read AGENTS.md, Docs/PROJECT_STATE.md and Docs/PortfolioPhotoSession.md. Use exact Unity 6000.3.9f1 and preserve Assets/Scenes/Kartikaris_MapTest.unity, the actual Kartikaris Mech model and the procedurally generated forest (~25k trees). Prepare 2–3 real in-engine portfolio screenshot candidates: mech foreground at a clear cinematic three-quarter angle, actual forest hills behind, optional real cannon pose. Prefer a separate opt-in exterior capture camera or staging scene that cannot disrupt the cockpit and game. The user will approve or manually adjust framing before final capture. Native 1280×720 minimum is fine; 1600×900/1920×1080 optional. If Unity GUI/rendering isn't available, provide exact manual composition/capture instructions and clearly report no screenshots taken. Follow AGENTS.md's project-state/report requirements for any implementation edits, verify realistically, commit only scoped work and stop for human photo review. No gameplay redesign, Unity upgrade, or fabricated screenshot.
+Work in Shikirashi/Kartikaris-Unity on main. This is the real legacy Unity mech+forest project, not Kartikaris-Godot. Read AGENTS.md, Docs/PROJECT_STATE.md and Docs/PortfolioPhotoSession.md. Use exact Unity 6000.3.9f1 and preserve Assets/Scenes/Kartikaris_MapTest.unity, the actual Kartikaris Mech model and the procedurally generated forest (~25k trees). Prepare a STATIC, non-hostile opt-in scene with a stationary mech, static forest and no active AI/fire/simulation; take 2–3 real in-engine portfolio screenshot candidates FIRST: mech foreground at a clear cinematic three-quarter angle, actual forest hills behind, optional stationary cannon pose. Prefer a separate opt-in exterior capture camera or staging scene that cannot disrupt the cockpit and game. The user will approve or manually adjust framing before final capture. Native 1280×720 minimum is fine; 1600×900/1920×1080 optional. If Unity GUI/rendering isn't available, provide exact manual composition/capture instructions and clearly report no screenshots taken. Follow AGENTS.md's project-state/report requirements for any implementation edits, verify realistically, commit only scoped work and stop for human photo review. No gameplay redesign, Unity upgrade, or fabricated screenshot.
 ```
