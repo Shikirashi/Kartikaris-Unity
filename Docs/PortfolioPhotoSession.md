@@ -1,6 +1,6 @@
 # KART-UNITY-PHOTO-001 — Mech and forest portfolio photo session
 
-**Status:** INITIAL DRAFTS CAPTURED — stable isolated scene and three real Unity `6000.3.9f1` candidates are ready for human review.
+**Status:** INITIAL CAPTURE REVIEWED — user prefers camera C / `kartikaris_alt_02.png`, but the fully upright cannon silhouette needs a pose-variation pass before final approval.
 **Source repository:** `Shikirashi/Kartikaris-Unity`, `main`.
 **Primary scene:** `Assets/Scenes/Kartikaris_MapTest.unity`.
 **Unity editor:** `6000.3.9f1` (Unity 6.3 LTS), from `ProjectSettings/ProjectVersion.txt`.
@@ -71,6 +71,31 @@ The real Player mech is saved at world position `(-32.695, 40.058, -96.707)` and
 - **C — Cannon:** position `(-32.490, 46.210, -76.946)`, rotation `(3.462, 180.447, 0)`, FOV `34°`.
 
 The isolated Directional Light is saved at rotation `(42, -28, 0)`, intensity `1.25`, warm color `(1, 0.94, 0.84)`, soft shadows at `0.9` strength, and ambient intensity `1.05`. The static Animator evaluation leaves the cannon deployed; all photo cameras remain disabled until explicitly previewed or rendered.
+
+## Human review — 1 November 2026 (KART-UNITY-PHOTO-001 continuation)
+
+**Confirmed push:** `04b93baba4d27199e02501dd2ede058ff8cf05ab` (initial real 1600×900 captures). The screenshots are intentionally **local, ignored**, not missing because the source commit failed. The user supplied all three screenshots for visual review.
+
+### Shot decision
+- **Preferred composition:** `kartikaris_alt_02.png` (camera `PhotoCamera_C_Cannon`, labeled alt 2). Preserve its balanced forest/background, subject size and overall framing as the baseline.
+- `kartikaris_alt_01.png` works as a wider environmental backup, but the mech is small for gallery cards.
+- `kartikaris_hero_01.png` hides too much of the mech behind the tall cannon; not selected.
+- **Main defect:** current helper's `PoseCannon()` unconditionally sets Animator bool `cannon=true` and advances 240 frames, freezing an extremely tall vertical cannon. Without context this resembles a pole and overwhelms the robot, particularly at thumbnail size.
+
+### Authorized follow-up — static cannon-pose variants
+1. Inspect existing actual mech Animator, animation clips and articulation/pivot hierarchy. Determine **genuine travel/folded and deployed/unfolded poses** and how they are safely selected. Do not assume that blindly toggling one bool gives correct articulation; evaluate/verify both actual states visually. Never invent or redesign mechanical geometry or claim a pose is an implemented gameplay ability if it is photo-only.
+2. Preserve **camera C / alt 2** as the base view. Do not use `Create or Refresh Static Scene` or automated scene recreation in a way that overwrites manually adjusted original fixture/cameras. Preserve the current scene and current three raw drafts; create **separate named capture states or saved photo fixtures** if that is safer.
+3. In an opt-in, STATIC, NON-HOSTILE photo setup, make at least these genuine in-engine candidates:
+   - `kartikaris_alt2_folded_01.png`: travel/folded cannon with the mech fully readable. This is the **preferred potential gallery hero**.
+   - `kartikaris_alt2_deployed_01.png`: deployed/unfolded cannon in its legitimate animation pose, perhaps vertical if that's what the rig actually does.
+   - `kartikaris_alt2_deployed_angle_01.png`: alternative lower or rotated cannon elevation **only if supported by the actual rig and transform constraints**; otherwise report unavailable rather than posing physically impossible joints.
+   - Optional alternate slightly three-quarter camera if the folded silhouette improves.
+4. Any temporary projectile, gun or actor effect must stay frozen; no live enemy AI or moving simulation. No fake motion/action.
+5. Codex captures and actually inspects **first candidate screenshots** with Unity `6000.3.9f1`, native `1600×900` where available, saves camera and cannon transform/animator parameters, and reports what articulation is possible. Do not claim a screenshot exists without inspecting a real rendered file.
+6. The user selects the final hero from the new variants. **Do not publish to the website yet.**
+7. If code/scene/editor tooling changes, update `Docs/PROJECT_STATE.md` and add a factual report under `Docs/ImplementationReports/` per `AGENTS.md`; confirm original `Assets/Scenes/Kartikaris_MapTest.unity` and `Assets/New Terrain.asset` are unchanged. Keep captures outside Git until final approved public image is transferred to portfolio repository.
+
+**Execution:** This is the next review-correction pass of the same task, not a new gameplay feature. Continue and stop after screenshots + documentation + scoped commit/push for another human review.
 
 ## Pass 2 — Human visual direction
 - User selects A/B/C or opens Unity and takes a low-resolution manual screenshot showing the desired camera angle/model placement.
