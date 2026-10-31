@@ -1,6 +1,6 @@
 # KART-UNITY-PHOTO-001 — Mech and forest portfolio photo session
 
-**Status:** CAPTURE BLOCKED — the isolated editor helper is prepared, but exact Unity `6000.3.9f1` reports no valid Editor license before project import; **no screenshot has been captured**.
+**Status:** INITIAL DRAFTS CAPTURED — stable isolated scene and three real Unity `6000.3.9f1` candidates are ready for human review.
 **Source repository:** `Shikirashi/Kartikaris-Unity`, `main`.
 **Primary scene:** `Assets/Scenes/Kartikaris_MapTest.unity`.
 **Unity editor:** `6000.3.9f1` (Unity 6.3 LTS), from `ProjectSettings/ProjectVersion.txt`.
@@ -33,7 +33,7 @@ This is a **photo session**, not authorization to redesign the game's normal cam
 
 ## Prepared opt-in capture workflow
 
-`Assets/Editor/KartikarisPortfolioPhotoSession.cs` is the prepared editor-only helper. It never saves the authoritative `Kartikaris_MapTest.unity` scene. Its creation command copies that scene to `Assets/Scenes/Kartikaris_PortfolioPhotoSession.unity`, makes the copy static/non-hostile, and saves three disabled external cameras with their transforms and fields of view. The draft capture command renders real project assets to `Temp/PortfolioPhotoSession/` at native `1600×900`:
+`Assets/Editor/KartikarisPortfolioPhotoSession.cs` is the prepared editor-only helper. It never saves the authoritative `Kartikaris_MapTest.unity` scene. Its creation command copies that scene to `Assets/Scenes/Kartikaris_PortfolioPhotoSession.unity`, makes the copy static/non-hostile, and saves three disabled external cameras with their transforms and fields of view. The draft capture command renders real project assets to `PortfolioCaptures/PhotoSession/` at native `1600×900`:
 
 - `kartikaris_hero_01.png` — camera A, prominent three-quarter mech composition.
 - `kartikaris_alt_01.png` — camera B, wider forest/terrain scale composition.
@@ -45,7 +45,7 @@ After activating a valid Unity Editor license, perform the initial setup with ex
 2. Choose **Kartikaris > Portfolio Photo Session > Create or Refresh Static Scene**. This creates/recreates only the isolated photo scene.
 3. Open `Assets/Scenes/Kartikaris_PortfolioPhotoSession.unity` and verify the `PhotoSession_STATIC_NON_HOSTILE` root, inactive Enemy/cockpit/Canvas, disabled gameplay components, stationary Player mech, Terrain/forest, Directional Light, and the three saved photo cameras.
 4. Select each camera and use its Camera Preview to adjust framing if desired. Save the isolated photo scene; do not run Play Mode and do not modify `Kartikaris_MapTest.unity`.
-5. Choose **Kartikaris > Portfolio Photo Session > Capture 1600x900 Drafts**. Review the three PNGs in `Temp/PortfolioPhotoSession/`.
+5. Choose **Kartikaris > Portfolio Photo Session > Capture 1600x900 Drafts**. Review the three PNGs in `PortfolioCaptures/PhotoSession/`.
 
 For a fully automated initial build and capture after licensing, close other Unity instances and run:
 
@@ -59,6 +59,18 @@ For a fully automated initial build and capture after licensing, close other Uni
 ```
 
 The automated entry point recreates the isolated scene, so use the menu-only capture command after making manual camera adjustments.
+
+## Initial draft result — 1 November 2026
+
+The licensed Unity `6000.3.9f1` CLI created `Assets/Scenes/Kartikaris_PortfolioPhotoSession.unity` and rendered all three candidates at native `1600×900`. Draft PNGs remain local and ignored under `PortfolioCaptures/PhotoSession/`; none were published or committed.
+
+The real Player mech is saved at world position `(-32.695, 40.058, -96.707)` and rotation `(0, 28, 0)`. The copied fixture uses a private duplicate of the generated TerrainData with 24,968 of the original 25,000 trees. Thirty-two trees were removed only from local camera sight corridors in that duplicate after visual inspection showed foreground canopies obscuring the mech; the source TerrainData and production scene are unchanged.
+
+- **A — Hero:** position `(-34.466, 45.358, -112.079)`, rotation `(3.146, 6.750, 0)`, FOV `38°`.
+- **B — Environment:** position `(-13.696, 47.404, -90.591)`, rotation `(6.840, 252.193, 0)`, FOV `47°`.
+- **C — Cannon:** position `(-32.490, 46.210, -76.946)`, rotation `(3.462, 180.447, 0)`, FOV `34°`.
+
+The isolated Directional Light is saved at rotation `(42, -28, 0)`, intensity `1.25`, warm color `(1, 0.94, 0.84)`, soft shadows at `0.9` strength, and ambient intensity `1.05`. The static Animator evaluation leaves the cannon deployed; all photo cameras remain disabled until explicitly previewed or rendered.
 
 ## Pass 2 — Human visual direction
 - User selects A/B/C or opens Unity and takes a low-resolution manual screenshot showing the desired camera angle/model placement.

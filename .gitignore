@@ -45,3 +45,6 @@ Desktop.ini
 .agents/
 .aws/
 .codex/
+
+# Local, unapproved portfolio capture drafts
+PortfolioCaptures/

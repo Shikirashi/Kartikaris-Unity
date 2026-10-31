@@ -19,19 +19,22 @@ namespace Kartikaris.Editor
         private const string SourceScenePath = "Assets/Scenes/Kartikaris_MapTest.unity";
         private const string PhotoScenePath =
             "Assets/Scenes/Kartikaris_PortfolioPhotoSession.unity";
+        private const string PhotoAssetFolder = "Assets/PortfolioPhotoSession";
+        private const string PhotoTerrainDataPath =
+            PhotoAssetFolder + "/Kartikaris_PhotoTerrainData.asset";
         private const string PhotoRootName = "PhotoSession_STATIC_NON_HOSTILE";
-        private const string CaptureDirectory = "Temp/PortfolioPhotoSession";
+        private const string CaptureDirectory = "PortfolioCaptures/PhotoSession";
         private const int CaptureWidth = 1600;
         private const int CaptureHeight = 900;
 
         private static readonly Shot[] Shots =
         {
             new Shot("PhotoCamera_A_Hero", "kartikaris_hero_01.png", 38f,
-                1.85f, 0.90f, 0.35f, 0.12f, 0.04f),
+                1.08f, 0.90f, 0.35f, 0.10f, 0.04f),
             new Shot("PhotoCamera_B_Environment", "kartikaris_alt_01.png", 47f,
-                3.05f, -0.72f, 0.70f, 0.38f, 0.12f),
+                1.75f, -0.72f, 0.70f, 0.28f, 0.10f),
             new Shot("PhotoCamera_C_Cannon", "kartikaris_alt_02.png", 34f,
-                2.15f, -0.92f, -0.48f, 0.18f, 0.12f)
+                1.22f, -0.92f, -0.48f, 0.14f, 0.10f)
         };
 
         [MenuItem("Kartikaris/Portfolio Photo Session/Create or Refresh Static Scene")]
@@ -63,39 +66,23 @@ namespace Kartikaris.Editor
             string absoluteDirectory = Path.GetFullPath(CaptureDirectory);
             Directory.CreateDirectory(absoluteDirectory);
 
-            int previousQuality = QualitySettings.GetQualityLevel();
-            float previousShadowDistance = QualitySettings.shadowDistance;
-            float previousLodBias = QualitySettings.lodBias;
-            try
+            foreach (Shot shot in Shots)
             {
-                QualitySettings.SetQualityLevel(QualitySettings.names.Length - 1, true);
-                QualitySettings.shadowDistance = Mathf.Max(previousShadowDistance, 500f);
-                QualitySettings.lodBias = Mathf.Max(previousLodBias, 2f);
+                Transform cameraTransform = FindExact(photoRoot.transform, shot.CameraName);
+                Camera camera = cameraTransform != null
+                    ? cameraTransform.GetComponent<Camera>()
+                    : null;
+                if (camera == null)
+                    throw new InvalidOperationException(
+                        "Photo camera is missing: " + shot.CameraName);
 
-                foreach (Shot shot in Shots)
-                {
-                    Transform cameraTransform = FindExact(photoRoot.transform, shot.CameraName);
-                    Camera camera = cameraTransform != null
-                        ? cameraTransform.GetComponent<Camera>()
-                        : null;
-                    if (camera == null)
-                        throw new InvalidOperationException(
-                            "Photo camera is missing: " + shot.CameraName);
-
-                    string absolutePath = Path.Combine(absoluteDirectory, shot.FileName);
-                    Capture(camera, absolutePath, CaptureWidth, CaptureHeight);
-                    Debug.Log("PORTFOLIO_PHOTO_CAPTURED|shot=" + shot.CameraName +
-                        "|path=" + absolutePath + "|size=" + CaptureWidth + "x" +
-                        CaptureHeight + "|position=" + Format(camera.transform.position) +
-                        "|rotation=" + Format(camera.transform.eulerAngles) +
-                        "|fov=" + camera.fieldOfView.ToString("F1"));
-                }
-            }
-            finally
-            {
-                QualitySettings.SetQualityLevel(previousQuality, true);
-                QualitySettings.shadowDistance = previousShadowDistance;
-                QualitySettings.lodBias = previousLodBias;
+                string absolutePath = Path.Combine(absoluteDirectory, shot.FileName);
+                Capture(camera, absolutePath, CaptureWidth, CaptureHeight);
+                Debug.Log("PORTFOLIO_PHOTO_CAPTURED|shot=" + shot.CameraName +
+                    "|path=" + absolutePath + "|size=" + CaptureWidth + "x" +
+                    CaptureHeight + "|position=" + Format(camera.transform.position) +
+                    "|rotation=" + Format(camera.transform.eulerAngles) +
+                    "|fov=" + camera.fieldOfView.ToString("F1"));
             }
 
             Debug.Log("PORTFOLIO_PHOTO_CAPTURE_COMPLETE|scene=" + PhotoScenePath +
@@ -132,6 +119,11 @@ namespace Kartikaris.Editor
                     throw new IOException("Could not replace the existing photo scene.");
             }
 
+            EnsurePhotoAssetFolder();
+            if (AssetDatabase.LoadAssetAtPath<TerrainData>(PhotoTerrainDataPath) != null &&
+                !AssetDatabase.DeleteAsset(PhotoTerrainDataPath))
+                throw new IOException("Could not replace the isolated photo TerrainData.");
+
             if (!AssetDatabase.CopyAsset(SourceScenePath, PhotoScenePath))
                 throw new IOException("Could not copy the production scene for photography.");
             AssetDatabase.ImportAsset(PhotoScenePath, ImportAssetOptions.ForceSynchronousImport);
@@ -152,6 +144,7 @@ namespace Kartikaris.Editor
             DisableAllSceneCameras(scene);
             DisableGameplay(player);
             DisableGameplay(mapGenerator);
+            DisableGameplay(enemy);
             enemy.SetActive(false);
             SetRootInactiveIfPresent(scene, "cockpit");
             SetRootInactiveIfPresent(scene, "Canvas");
@@ -175,6 +168,8 @@ namespace Kartikaris.Editor
             foreach (Shot shot in Shots)
                 CreateCamera(photoRoot.transform, player.transform, mechBounds, terrain, shot);
 
+            CreateIsolatedPhotoTerrain(terrain, mechBounds.center, photoRoot.transform);
+
             EditorSceneManager.MarkSceneDirty(scene);
             if (!EditorSceneManager.SaveScene(scene, PhotoScenePath))
                 throw new IOException("Unity could not save the isolated photo scene.");
@@ -188,6 +183,170 @@ namespace Kartikaris.Editor
                 "|boundsSize=" + Format(mechBounds.size) +
                 "|terrainTrees=" + terrain.terrainData.treeInstanceCount +
                 "|staticNonHostile=true");
+        }
+
+        // Validation entry point for CI/CLI use. It does not modify or save the scene.
+        public static void ValidatePhotoSceneAndExit()
+        {
+            try
+            {
+                Scene scene = EditorSceneManager.OpenScene(PhotoScenePath, OpenSceneMode.Single);
+                GameObject player = RequireRoot(scene, "Player");
+                GameObject enemy = RequireRoot(scene, "Enemy");
+                GameObject mapGenerator = RequireRoot(scene, "MapGenerator");
+                GameObject cockpit = RequireRoot(scene, "cockpit");
+                GameObject canvas = RequireRoot(scene, "Canvas");
+                GameObject photoRoot = RequireRoot(scene, PhotoRootName);
+                Terrain terrain = RequireRoot(scene, "Terrain").GetComponent<Terrain>();
+                List<string> failures = new List<string>();
+
+                Check(!enemy.activeSelf, "Enemy root inactive", failures);
+                Check(!cockpit.activeSelf, "cockpit root inactive", failures);
+                Check(!canvas.activeSelf, "Canvas root inactive", failures);
+                Check(player.GetComponentsInChildren<MonoBehaviour>(true)
+                    .All(behaviour => !behaviour.enabled),
+                    "Player gameplay MonoBehaviours disabled", failures);
+                Check(enemy.GetComponentsInChildren<MonoBehaviour>(true)
+                    .All(behaviour => !behaviour.enabled),
+                    "Enemy gameplay MonoBehaviours disabled", failures);
+                Check(mapGenerator.GetComponentsInChildren<MonoBehaviour>(true)
+                    .All(behaviour => !behaviour.enabled),
+                    "MapGenerator gameplay MonoBehaviours disabled", failures);
+                Check(scene.GetRootGameObjects()
+                    .SelectMany(root => root.GetComponentsInChildren<CharacterController>(true))
+                    .All(controller => !controller.enabled),
+                    "CharacterControllers disabled", failures);
+
+                Camera[] cameras = photoRoot.GetComponentsInChildren<Camera>(true);
+                Check(cameras.Length == Shots.Length, "three photo cameras saved", failures);
+                Check(cameras.All(camera => !camera.enabled),
+                    "photo cameras disabled by default", failures);
+                Check(cameras.All(camera => (camera.cullingMask &
+                    ((1 << 7) | (1 << 8) | (1 << 9))) == 0),
+                    "cockpit and UI layers excluded", failures);
+                Check(terrain != null && terrain.terrainData != null &&
+                    AssetDatabase.GetAssetPath(terrain.terrainData) == PhotoTerrainDataPath,
+                    "private photo TerrainData assigned", failures);
+                Check(terrain != null && terrain.terrainData != null &&
+                    terrain.terrainData.treeInstanceCount == 24968,
+                    "expected copied forest tree count", failures);
+
+                int missingScripts = scene.GetRootGameObjects().Sum(root =>
+                    root.GetComponentsInChildren<Transform>(true).Sum(item =>
+                        GameObjectUtility.GetMonoBehavioursWithMissingScriptCount(item.gameObject)));
+                Check(missingScripts == 0, "no missing scripts", failures);
+
+                foreach (Shot shot in Shots)
+                {
+                    string path = Path.GetFullPath(Path.Combine(CaptureDirectory, shot.FileName));
+                    Check(File.Exists(path), "draft exists: " + shot.FileName, failures);
+                    if (!File.Exists(path))
+                        continue;
+                    Texture2D image = new Texture2D(2, 2);
+                    try
+                    {
+                        Check(image.LoadImage(File.ReadAllBytes(path), true) &&
+                            image.width == CaptureWidth && image.height == CaptureHeight,
+                            "draft dimensions: " + shot.FileName, failures);
+                    }
+                    finally
+                    {
+                        UnityEngine.Object.DestroyImmediate(image);
+                    }
+                }
+
+                Debug.Log("PORTFOLIO_PHOTO_VALIDATION|failures=" + failures.Count +
+                    "|trees=" + (terrain != null && terrain.terrainData != null
+                        ? terrain.terrainData.treeInstanceCount : -1) +
+                    "|cameras=" + cameras.Length + "|missingScripts=" + missingScripts);
+                if (failures.Count > 0)
+                    throw new InvalidOperationException(string.Join("; ", failures));
+                EditorApplication.Exit(0);
+            }
+            catch (Exception exception)
+            {
+                Debug.LogException(exception);
+                EditorApplication.Exit(1);
+            }
+        }
+
+        private static void Check(bool condition, string label, List<string> failures)
+        {
+            if (!condition)
+                failures.Add(label);
+        }
+
+        private static void EnsurePhotoAssetFolder()
+        {
+            if (AssetDatabase.IsValidFolder(PhotoAssetFolder))
+                return;
+            string guid = AssetDatabase.CreateFolder("Assets", "PortfolioPhotoSession");
+            if (string.IsNullOrEmpty(guid))
+                throw new IOException("Could not create the isolated photo asset folder.");
+        }
+
+        private static void CreateIsolatedPhotoTerrain(Terrain terrain, Vector3 target,
+            Transform photoRoot)
+        {
+            TerrainData sourceData = terrain.terrainData;
+            TerrainData photoData = UnityEngine.Object.Instantiate(sourceData);
+            photoData.name = "Kartikaris Photo TerrainData";
+            AssetDatabase.CreateAsset(photoData, PhotoTerrainDataPath);
+
+            Vector3 origin = terrain.transform.position;
+            Vector3 size = photoData.size;
+            Camera[] cameras = photoRoot.GetComponentsInChildren<Camera>(true);
+            List<TreeInstance> retained = new List<TreeInstance>(photoData.treeInstanceCount);
+            int removed = 0;
+
+            foreach (TreeInstance tree in photoData.treeInstances)
+            {
+                Vector2 treePoint = new Vector2(
+                    origin.x + tree.position.x * size.x,
+                    origin.z + tree.position.z * size.z);
+                bool obstructs = Vector2.Distance(treePoint,
+                    new Vector2(target.x, target.z)) < 13f;
+
+                foreach (Camera camera in cameras)
+                {
+                    if (obstructs)
+                        break;
+                    Vector2 cameraPoint = new Vector2(
+                        camera.transform.position.x, camera.transform.position.z);
+                    Vector2 targetPoint = new Vector2(target.x, target.z);
+                    obstructs = Vector2.Distance(treePoint, cameraPoint) < 8f ||
+                        DistanceToSegment(treePoint, cameraPoint, targetPoint) < 10f;
+                }
+
+                if (obstructs)
+                    removed++;
+                else
+                    retained.Add(tree);
+            }
+
+            photoData.SetTreeInstances(retained.ToArray(), true);
+            terrain.terrainData = photoData;
+            TerrainCollider terrainCollider = terrain.GetComponent<TerrainCollider>();
+            if (terrainCollider != null)
+                terrainCollider.terrainData = photoData;
+            EditorUtility.SetDirty(photoData);
+            EditorUtility.SetDirty(terrain);
+            if (terrainCollider != null)
+                EditorUtility.SetDirty(terrainCollider);
+
+            Debug.Log("PORTFOLIO_PHOTO_FOREST_ISOLATED|sourceTrees=" +
+                sourceData.treeInstanceCount + "|retainedTrees=" + retained.Count +
+                "|removedSightlineTrees=" + removed + "|asset=" + PhotoTerrainDataPath);
+        }
+
+        private static float DistanceToSegment(Vector2 point, Vector2 start, Vector2 end)
+        {
+            Vector2 segment = end - start;
+            float lengthSquared = segment.sqrMagnitude;
+            if (lengthSquared < 0.0001f)
+                return Vector2.Distance(point, start);
+            float t = Mathf.Clamp01(Vector2.Dot(point - start, segment) / lengthSquared);
+            return Vector2.Distance(point, start + segment * t);
         }
 
         private static void DisableAllSceneCameras(Scene scene)
