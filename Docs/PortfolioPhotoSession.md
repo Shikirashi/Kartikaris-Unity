@@ -1,6 +1,6 @@
 # KART-UNITY-PHOTO-001 — Mech and forest portfolio photo session
 
-**Status:** TWO IMAGES USER-APPROVED; OPTIONAL THIRD 30° CANNON SHOT CAPTURED — the approved upright-deployed and folded images remain preserved, and one measured 30° candidate is ready for human review. Nothing is published yet.
+**Status:** TWO FINAL GALLERY SHOTS APPROVED — `kartikaris_alt2_folded_02.png` (travel/folded) and `kartikaris_alt2_unfolded_30deg.png` (deployed, aimed 30° above horizontal). Earlier upright `kartikaris_alt2_unfolded_02.png` retained only as a backup. Images have NOT been published to the website.
 **Source repository:** `Shikirashi/Kartikaris-Unity`, `main`.
 **Primary scene:** `Assets/Scenes/Kartikaris_MapTest.unity`.
 **Unity editor:** `6000.3.9f1` (Unity 6.3 LTS), from `ProjectSettings/ProjectVersion.txt`.
@@ -147,6 +147,14 @@ Preserve both in the portfolio gallery. They are complementary, not a hidden bac
 - Verification: the helper measured `asin(dot(FirePoint.forward, referenceUp)) = 30.048°` immediately before capture and rejects values outside `30° ± 0.5°`.
 - Visual inspection: real deployed Kartikaris mech and forest are present; the cannon is visibly lowered; composition and lighting remain intact; no obvious cannon/mech intersection, firing, motion, UI, or render defect is visible.
 - Preservation: the approved `kartikaris_alt2_unfolded_02.png` and `kartikaris_alt2_folded_02.png` retained their earlier timestamps and were not overwritten. No scene was saved and no image was published.
+
+## Final image selection — 1 November 2026 (supersedes earlier upright selection)
+
+The user supplied and explicitly approved the new `kartikaris_alt2_unfolded_30deg.png` image as the **deployed-cannon photo** for the portfolio. Retain prior approval of `kartikaris_alt2_folded_02.png` as the **folded/travel-cannon photo**. This **replaces** the earlier selection of the fully upright `kartikaris_alt2_unfolded_02.png` for the live gallery; that file remains an unselected backup.
+
+Publish exactly these two **static, immediately visible** photographs side by side on desktop (stacked on mobile), with captions "Cannon deployed — 30° elevation" and "Cannon folded — travel configuration". Do not insert the vertical-cannon backup instead. Both were genuinely captured in Unity `6000.3.9f1` at native 1600×900. Codex's `a88c528` report measured the new shot at `30.048°` using the actual muzzle direction. Preserve original names as source references; optimized derivatives for the Gallery may use descriptive filenames.
+
+**Important publication gate:** Raw files are local under Git-ignored `PortfolioCaptures/PhotoSession/`; this documentation update does not upload images or publish the Gallery. Confirm both binary assets exist in the portfolio build before deployment. No more Kartikaris photo iteration required unless requested.
 
 ## Pass 2 — Human visual direction
 - User selects A/B/C or opens Unity and takes a low-resolution manual screenshot showing the desired camera angle/model placement.
