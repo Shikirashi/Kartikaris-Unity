@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Kartikaris.Combat;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -89,6 +90,156 @@ namespace Kartikaris.Editor
                 "|directory=" + absoluteDirectory + "|count=" + Shots.Length);
         }
 
+        [MenuItem("Kartikaris/Portfolio Photo Session/Capture Alt 2 Cannon Pose Variants")]
+        public static void CaptureAlt2CannonPoseVariants()
+        {
+            Scene scene = EditorSceneManager.OpenScene(PhotoScenePath, OpenSceneMode.Single);
+            GameObject player = RequireRoot(scene, "Player");
+            GameObject mechVisual = FindExact(player.transform, "Kartikaris Mech")?.gameObject;
+            GameObject photoRoot = RequireRoot(scene, PhotoRootName);
+            Camera anchorCamera = FindExact(photoRoot.transform, "PhotoCamera_C_Cannon")
+                ?.GetComponent<Camera>();
+            KartikarisCannonWeapon weapon = player.GetComponent<KartikarisCannonWeapon>();
+            if (mechVisual == null || anchorCamera == null || weapon == null)
+                throw new InvalidOperationException(
+                    "Alt-2 capture requires the staged mech, Cannon camera and Player weapon.");
+
+            string absoluteDirectory = Path.GetFullPath(CaptureDirectory);
+            Directory.CreateDirectory(absoluteDirectory);
+            Vector3 anchorPosition = anchorCamera.transform.position;
+            Quaternion anchorRotation = anchorCamera.transform.rotation;
+            float anchorFov = anchorCamera.fieldOfView;
+            Quaternion unfoldedHeading = weapon.HeadingPivot.localRotation;
+            Quaternion unfoldedElevation = weapon.ElevationPivot.localRotation;
+
+            try
+            {
+                CaptureVariant(anchorCamera, absoluteDirectory,
+                    "kartikaris_alt2_unfolded_01.png", "unfolded", 0f, 0f,
+                    anchorPosition, anchorRotation, anchorFov);
+                Bounds unfoldedBounds = CalculateBounds(mechVisual);
+                Vector3 unfoldedAltPosition = anchorPosition -
+                    (anchorRotation * Vector3.right) * 2.2f + Vector3.up * 0.5f;
+                Quaternion unfoldedAltRotation = Quaternion.LookRotation(
+                    unfoldedBounds.center - unfoldedAltPosition, Vector3.up);
+                CaptureVariant(anchorCamera, absoluteDirectory,
+                    "kartikaris_alt2_unfolded_02.png", "unfolded-alt-camera", 0f, 0f,
+                    unfoldedAltPosition, unfoldedAltRotation, 35f);
+
+                weapon.HeadingPivot.localRotation = unfoldedHeading;
+                weapon.ElevationPivot.localRotation = unfoldedElevation;
+                ApplyStaticCannonOffset(weapon, 12f, 12f);
+                CaptureVariant(anchorCamera, absoluteDirectory,
+                    "kartikaris_alt2_unfolded_elev78_az12.png",
+                    "unfolded-elevation-azimuth", 12f, 12f,
+                    anchorPosition, anchorRotation, anchorFov);
+
+                weapon.HeadingPivot.localRotation = unfoldedHeading;
+                weapon.ElevationPivot.localRotation = unfoldedElevation;
+                ApplyStaticCannonOffset(weapon, -12f, 6f);
+                CaptureVariant(anchorCamera, absoluteDirectory,
+                    "kartikaris_alt2_unfolded_elev84_az-12.png",
+                    "unfolded-elevation-azimuth", -12f, 6f,
+                    anchorPosition, anchorRotation, anchorFov);
+
+            }
+            finally
+            {
+                weapon.HeadingPivot.localRotation = unfoldedHeading;
+                weapon.ElevationPivot.localRotation = unfoldedElevation;
+                anchorCamera.transform.SetPositionAndRotation(anchorPosition, anchorRotation);
+                anchorCamera.fieldOfView = anchorFov;
+            }
+
+            CaptureFoldedAlt2Variants(absoluteDirectory);
+
+            Debug.Log("PORTFOLIO_ALT2_VARIANTS_COMPLETE|scene=" + PhotoScenePath +
+                "|directory=" + absoluteDirectory + "|count=6|sceneSaved=false");
+        }
+
+        public static void CaptureAlt2CannonPoseVariantsAndExit()
+        {
+            try
+            {
+                CaptureAlt2CannonPoseVariants();
+                EditorApplication.Exit(0);
+            }
+            catch (Exception exception)
+            {
+                Debug.LogException(exception);
+                EditorApplication.Exit(1);
+            }
+        }
+
+        private static void CaptureVariant(Camera camera, string directory, string fileName,
+            string pose, float headingOffset, float elevationOffset, Vector3 position,
+            Quaternion rotation, float fieldOfView)
+        {
+            camera.transform.SetPositionAndRotation(position, rotation);
+            camera.fieldOfView = fieldOfView;
+            string path = Path.Combine(directory, fileName);
+            Capture(camera, path, CaptureWidth, CaptureHeight);
+            Debug.Log("PORTFOLIO_ALT2_VARIANT_CAPTURED|file=" + fileName +
+                "|pose=" + pose + "|position=" + Format(position) +
+                "|rotation=" + Format(rotation.eulerAngles) +
+                "|fov=" + fieldOfView.ToString("F1") +
+                "|headingOffset=" + headingOffset.ToString("F1") +
+                "|elevationOffset=" + elevationOffset.ToString("F1") +
+                "|size=" + CaptureWidth + "x" + CaptureHeight);
+        }
+
+        private static void CaptureFoldedAlt2Variants(string absoluteDirectory)
+        {
+            Scene scene = EditorSceneManager.OpenScene(PhotoScenePath, OpenSceneMode.Single);
+            GameObject player = RequireRoot(scene, "Player");
+            GameObject mechVisual = FindExact(player.transform, "Kartikaris Mech")?.gameObject;
+            GameObject photoRoot = RequireRoot(scene, PhotoRootName);
+            Camera camera = FindExact(photoRoot.transform, "PhotoCamera_C_Cannon")
+                ?.GetComponent<Camera>();
+            if (mechVisual == null || camera == null)
+                throw new InvalidOperationException("The folded Alt-2 setup is incomplete.");
+
+            Vector3 anchorPosition = camera.transform.position;
+            Quaternion anchorRotation = camera.transform.rotation;
+            float anchorFov = camera.fieldOfView;
+            PoseCannon(mechVisual, false);
+            CaptureVariant(camera, absoluteDirectory,
+                "kartikaris_alt2_folded_01.png", "folded", 0f, 0f,
+                anchorPosition, anchorRotation, anchorFov);
+            Bounds foldedBounds = CalculateBounds(mechVisual);
+            Vector3 altPosition = anchorPosition +
+                (anchorRotation * Vector3.right) * 2.4f + Vector3.up * 0.35f;
+            Quaternion altRotation = Quaternion.LookRotation(
+                foldedBounds.center - altPosition, Vector3.up);
+            CaptureVariant(camera, absoluteDirectory,
+                "kartikaris_alt2_folded_02.png", "folded-alt-camera", 0f, 0f,
+                altPosition, altRotation, 35f);
+        }
+
+        private static void ApplyStaticCannonOffset(KartikarisCannonWeapon weapon,
+            float headingDegrees, float elevationOffsetDegrees)
+        {
+            if (weapon.HeadingPivot == null || weapon.ElevationPivot == null)
+                throw new InvalidOperationException("The staged weapon pivots are unavailable.");
+            weapon.HeadingPivot.localRotation *= Quaternion.AngleAxis(
+                headingDegrees, AxisVector(weapon.HeadingAxis));
+            weapon.ElevationPivot.localRotation *= Quaternion.AngleAxis(
+                elevationOffsetDegrees, AxisVector(weapon.ElevationAxis));
+        }
+
+        private static Vector3 AxisVector(KartikarisCannonWeapon.LocalRotationAxis axis)
+        {
+            switch (axis)
+            {
+                case KartikarisCannonWeapon.LocalRotationAxis.X:
+                    return Vector3.right;
+                case KartikarisCannonWeapon.LocalRotationAxis.Y:
+                    return Vector3.up;
+                default:
+                    return Vector3.forward;
+            }
+        }
+
         // Entry point used by an exact-version Unity batch invocation.
         public static void BuildAndCaptureDrafts()
         {
@@ -156,7 +307,7 @@ namespace Kartikaris.Editor
             player.SetActive(true);
             mechVisual.SetActive(true);
 
-            PoseCannon(mechVisual);
+            PoseCannon(mechVisual, true);
             Bounds mechBounds = CalculateBounds(mechVisual);
             if (mechBounds.size.sqrMagnitude < 0.01f)
                 throw new InvalidOperationException("The staged mech has no renderable bounds.");
@@ -394,7 +545,7 @@ namespace Kartikaris.Editor
             }
         }
 
-        private static void PoseCannon(GameObject mechVisual)
+        private static void PoseCannon(GameObject mechVisual, bool unfolded)
         {
             Animator animator = mechVisual.GetComponentInChildren<Animator>(true);
             if (animator == null)
@@ -407,7 +558,7 @@ namespace Kartikaris.Editor
                 parameter.name == "cannon" && parameter.type == AnimatorControllerParameterType.Bool);
             if (hasCannon)
             {
-                animator.SetBool("cannon", true);
+                animator.SetBool("cannon", unfolded);
                 for (int index = 0; index < 240; index++)
                     animator.Update(1f / 30f);
             }

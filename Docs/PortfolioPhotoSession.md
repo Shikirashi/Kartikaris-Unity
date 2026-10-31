@@ -1,6 +1,6 @@
 # KART-UNITY-PHOTO-001 — Mech and forest portfolio photo session
 
-**Status:** INITIAL CAPTURE REVIEWED — user prefers camera C / `kartikaris_alt_02.png`, but the fully upright cannon silhouette needs a pose-variation pass before final approval.
+**Status:** ALT 2 VARIANT DRAFTS CAPTURED — stable isolated scene, initial candidates, and six cannon-focused Unity `6000.3.9f1` outputs are ready for external visual review.
 **Source repository:** `Shikirashi/Kartikaris-Unity`, `main`.
 **Primary scene:** `Assets/Scenes/Kartikaris_MapTest.unity`.
 **Unity editor:** `6000.3.9f1` (Unity 6.3 LTS), from `ProjectSettings/ProjectVersion.txt`.
@@ -96,6 +96,23 @@ The isolated Directional Light is saved at rotation `(42, -28, 0)`, intensity `1
 7. If code/scene/editor tooling changes, update `Docs/PROJECT_STATE.md` and add a factual report under `Docs/ImplementationReports/` per `AGENTS.md`; confirm original `Assets/Scenes/Kartikaris_MapTest.unity` and `Assets/New Terrain.asset` are unchanged. Keep captures outside Git until final approved public image is transferred to portfolio repository.
 
 **Execution:** This is the next review-correction pass of the same task, not a new gameplay feature. Continue and stop after screenshots + documentation + scoped commit/push for another human review.
+
+## Alt 2 cannon-variant pass — 1 November 2026
+
+Use **Kartikaris > Portfolio Photo Session > Capture Alt 2 Cannon Pose Variants** to render the current six-file set without saving the photo scene. The command renders deployed candidates first, then reopens the isolated scene before attempting the folded pair. This split is intentional: Unity's disabled edit-mode Animator did not reliably transition from an already-rendered deployed pose back to folded in the same scene session.
+
+All outputs are native `1600×900` PNGs under ignored local directory `PortfolioCaptures/PhotoSession/`:
+
+| File | Intended pose | Camera position | Camera rotation | FOV | Pose offset |
+| --- | --- | --- | --- | --- | --- |
+| `kartikaris_alt2_folded_01.png` | Folded anchor | `(-32.490, 46.210, -76.946)` | `(3.462, 180.447, 0)` | `34°` | Animator `cannon=false`, evaluated in a freshly opened scene before its first render |
+| `kartikaris_alt2_folded_02.png` | Folded alternate | `(-34.890, 46.560, -76.928)` | `(11.120, 173.512, 0)` | `35°` | Same folded attempt; minor camera shift/look-at only |
+| `kartikaris_alt2_unfolded_01.png` | Deployed anchor | `(-32.490, 46.210, -76.946)` | `(3.462, 180.447, 0)` | `34°` | Saved static Alt 2 pose; no offset |
+| `kartikaris_alt2_unfolded_02.png` | Deployed alternate | `(-30.290, 46.710, -76.964)` | `(7.308, 186.809, 0)` | `35°` | Saved static pose; minor camera shift/look-at only |
+| `kartikaris_alt2_unfolded_elev78_az12.png` | Deployed orientation candidate | `(-32.490, 46.210, -76.946)` | `(3.462, 180.447, 0)` | `34°` | Heading `+12°`, elevation-pivot offset `+12°` |
+| `kartikaris_alt2_unfolded_elev84_az-12.png` | Deployed orientation candidate | `(-32.490, 46.210, -76.946)` | `(3.462, 180.447, 0)` | `34°` | Heading `-12°`, elevation-pivot offset `+6°` |
+
+The CLI reported successful rendering and the dimensions above. At the user's request, Codex stopped visually interpreting the images; a separate ChatGPT image review will determine whether each filename's intended cannon state is actually visible and provide concrete follow-up instructions. In particular, treat the two `folded` filenames as **unconfirmed**, not approved, until that review. No image has been published.
 
 ## Pass 2 — Human visual direction
 - User selects A/B/C or opens Unity and takes a low-resolution manual screenshot showing the desired camera angle/model placement.
