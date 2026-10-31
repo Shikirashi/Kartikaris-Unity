@@ -1,6 +1,6 @@
 # KART-UNITY-PHOTO-001 — Mech and forest portfolio photo session
 
-**Status:** TWO IMAGES USER-APPROVED; OPTIONAL THIRD 30° CANNON SHOT REQUESTED — existing `kartikaris_alt2_unfolded_02.png` (upright deployed) and `kartikaris_alt2_folded_02.png` (folded) are selected for public gallery. Exact local captures are ignored and must still be transferred as approved assets; publication is not yet complete.
+**Status:** TWO IMAGES USER-APPROVED; OPTIONAL THIRD 30° CANNON SHOT CAPTURED — the approved upright-deployed and folded images remain preserved, and one measured 30° candidate is ready for human review. Nothing is published yet.
 **Source repository:** `Shikirashi/Kartikaris-Unity`, `main`.
 **Primary scene:** `Assets/Scenes/Kartikaris_MapTest.unity`.
 **Unity editor:** `6000.3.9f1` (Unity 6.3 LTS), from `ProjectSettings/ProjectVersion.txt`.
@@ -129,7 +129,7 @@ The user explicitly approved **both of the images most recently shared** as port
 
 Preserve both in the portfolio gallery. They are complementary, not a hidden backup. Do not overwrite either original. Gallery should show two visible inline photographs with meaningful captions, no hover or click required. Source image files are currently **local and Git-ignored**; this documentation update alone does not publish the images.
 
-### Additional requested static photo (not yet captured)
+### Additional requested static photo (captured; awaiting human review)
 - Create **one** new screenshot `kartikaris_alt2_unfolded_30deg.png` from the **same camera framing as `kartikaris_alt2_unfolded_02.png`** (its alternative camera transform/FOV), with the deployed cannon at **physical elevation 30° above the horizontal**, not 30° from vertical.
 - Actual articulation **is procedural**, once the deployment animation is complete. Verified in `Assets/Scripts/Combat/KartikarisCannonWeapon.cs`: `ElevationOffsetFromPhysicalDegrees(physicalElevationDegrees)` is `90f - physicalElevationDegrees`, so 30° elevation corresponds to **+60° pivot offset from the deployed vertical animation base pose** on `weapon.ElevationPivot` using `weapon.ElevationAxis`. Existing `+12°` and `+6°` offsets correspond to approximately 78° and 84° physical elevation, respectively.
 - Preserve the deployed animation pose; **do not** attempt to play the fold animation to lower the cannon. Do not alter runtime `KartikarisCannonWeapon` gameplay code or aim limits just for the picture.
@@ -138,6 +138,15 @@ Preserve both in the portfolio gallery. They are complementary, not a hidden bac
 - Preserve already-selected images, original capture filenames and photo scene, original `Kartikaris_MapTest.unity`, and `Assets/New Terrain.asset`. Changes must be limited to isolated editor photo capture tooling and the project task/report documentation. Stop for human visual review of this third candidate; no publication without the site's Gallery task.
 
 **Codex instruction:** Work in `Shikirashi/Kartikaris-Unity` on `main`. Read `AGENTS.md`, `Docs/PROJECT_STATE.md`, and this photo task. Extend the existing opt-in editor capture helper to render a single deployed cannon at exactly 30° physical elevation from horizontal using procedural pivot articulation. Reuse the `alt2_unfolded_02` camera; do not overwrite the six old PNGs; output `kartikaris_alt2_unfolded_30deg.png`, report measured muzzle angle and capture evidence, follow project-state/implementation-report workflow, commit and push only scoped code/docs, and stop for human review.
+
+### 30° capture result — 1 November 2026
+
+- Output: `PortfolioCaptures/PhotoSession/kartikaris_alt2_unfolded_30deg.png`, native `1600×900`, local and Git-ignored.
+- Camera: position `(-30.290, 46.710, -76.964)`, rotation `(7.308, 186.809, 0)`, FOV `35°`; this matches `kartikaris_alt2_unfolded_02`.
+- Pose: saved deployed animation base plus one `+60°` procedural offset on the serialized X-axis elevation pivot. No heading offset was applied.
+- Verification: the helper measured `asin(dot(FirePoint.forward, referenceUp)) = 30.048°` immediately before capture and rejects values outside `30° ± 0.5°`.
+- Visual inspection: real deployed Kartikaris mech and forest are present; the cannon is visibly lowered; composition and lighting remain intact; no obvious cannon/mech intersection, firing, motion, UI, or render defect is visible.
+- Preservation: the approved `kartikaris_alt2_unfolded_02.png` and `kartikaris_alt2_folded_02.png` retained their earlier timestamps and were not overwritten. No scene was saved and no image was published.
 
 ## Pass 2 — Human visual direction
 - User selects A/B/C or opens Unity and takes a low-resolution manual screenshot showing the desired camera angle/model placement.

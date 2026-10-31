@@ -27,6 +27,9 @@ namespace Kartikaris.Editor
         private const string CaptureDirectory = "PortfolioCaptures/PhotoSession";
         private const int CaptureWidth = 1600;
         private const int CaptureHeight = 900;
+        private const float ThirtyDegreeTarget = 30f;
+        private const float ThirtyDegreeProceduralOffset = 60f;
+        private const float MuzzleElevationTolerance = 0.5f;
 
         private static readonly Shot[] Shots =
         {
@@ -171,6 +174,89 @@ namespace Kartikaris.Editor
             }
         }
 
+        [MenuItem("Kartikaris/Portfolio Photo Session/Capture Alt 2 Deployed 30 Degrees")]
+        public static void CaptureAlt2Unfolded30Degrees()
+        {
+            Scene scene = EditorSceneManager.OpenScene(PhotoScenePath, OpenSceneMode.Single);
+            GameObject player = RequireRoot(scene, "Player");
+            GameObject mechVisual = FindExact(player.transform, "Kartikaris Mech")?.gameObject;
+            GameObject photoRoot = RequireRoot(scene, PhotoRootName);
+            Camera camera = FindExact(photoRoot.transform, "PhotoCamera_C_Cannon")
+                ?.GetComponent<Camera>();
+            KartikarisCannonWeapon weapon = player.GetComponent<KartikarisCannonWeapon>();
+            if (mechVisual == null || camera == null || weapon == null ||
+                weapon.ElevationPivot == null || weapon.FirePoint == null)
+            {
+                throw new InvalidOperationException(
+                    "The deployed 30-degree capture requires the staged mech, Cannon camera, " +
+                    "weapon elevation pivot and fire point.");
+            }
+
+            string absoluteDirectory = Path.GetFullPath(CaptureDirectory);
+            Directory.CreateDirectory(absoluteDirectory);
+            Vector3 anchorPosition = camera.transform.position;
+            Quaternion anchorRotation = camera.transform.rotation;
+            float anchorFov = camera.fieldOfView;
+            Quaternion deployedElevation = weapon.ElevationPivot.localRotation;
+            Bounds deployedBounds = CalculateBounds(mechVisual);
+            Vector3 cameraPosition = anchorPosition -
+                (anchorRotation * Vector3.right) * 2.2f + Vector3.up * 0.5f;
+            Quaternion cameraRotation = Quaternion.LookRotation(
+                deployedBounds.center - cameraPosition, Vector3.up);
+
+            float measuredElevation;
+            try
+            {
+                weapon.ElevationPivot.localRotation = deployedElevation;
+                weapon.ElevationPivot.localRotation *= Quaternion.AngleAxis(
+                    ThirtyDegreeProceduralOffset,
+                    AxisVector(weapon.ElevationAxis));
+                measuredElevation = MeasurePhysicalMuzzleElevation(weapon);
+                if (Mathf.Abs(measuredElevation - ThirtyDegreeTarget) >
+                    MuzzleElevationTolerance)
+                {
+                    throw new InvalidOperationException(
+                        "The +60-degree procedural offset measured " +
+                        measuredElevation.ToString("F3") +
+                        " degrees physical muzzle elevation; expected approximately 30 degrees.");
+                }
+
+                camera.transform.SetPositionAndRotation(cameraPosition, cameraRotation);
+                camera.fieldOfView = 35f;
+                string outputPath = Path.Combine(
+                    absoluteDirectory, "kartikaris_alt2_unfolded_30deg.png");
+                Capture(camera, outputPath, CaptureWidth, CaptureHeight);
+                Debug.Log("PORTFOLIO_ALT2_30DEG_CAPTURED|path=" + outputPath +
+                    "|size=" + CaptureWidth + "x" + CaptureHeight +
+                    "|cameraPosition=" + Format(cameraPosition) +
+                    "|cameraRotation=" + Format(cameraRotation.eulerAngles) +
+                    "|fov=35.0|elevationAxis=" + weapon.ElevationAxis +
+                    "|proceduralOffset=" + ThirtyDegreeProceduralOffset.ToString("F1") +
+                    "|measuredMuzzleElevation=" + measuredElevation.ToString("F3") +
+                    "|sceneSaved=false");
+            }
+            finally
+            {
+                weapon.ElevationPivot.localRotation = deployedElevation;
+                camera.transform.SetPositionAndRotation(anchorPosition, anchorRotation);
+                camera.fieldOfView = anchorFov;
+            }
+        }
+
+        public static void CaptureAlt2Unfolded30DegreesAndExit()
+        {
+            try
+            {
+                CaptureAlt2Unfolded30Degrees();
+                EditorApplication.Exit(0);
+            }
+            catch (Exception exception)
+            {
+                Debug.LogException(exception);
+                EditorApplication.Exit(1);
+            }
+        }
+
         private static void CaptureVariant(Camera camera, string directory, string fileName,
             string pose, float headingOffset, float elevationOffset, Vector3 position,
             Quaternion rotation, float fieldOfView)
@@ -238,6 +324,19 @@ namespace Kartikaris.Editor
                 default:
                     return Vector3.forward;
             }
+        }
+
+        private static float MeasurePhysicalMuzzleElevation(KartikarisCannonWeapon weapon)
+        {
+            Transform referenceFrame = weapon.ElevationHudReferenceFrame != null
+                ? weapon.ElevationHudReferenceFrame
+                : weapon.transform;
+            return Mathf.Asin(Mathf.Clamp(
+                Vector3.Dot(
+                    weapon.FirePoint.forward.normalized,
+                    referenceFrame.up.normalized),
+                -1f,
+                1f)) * Mathf.Rad2Deg;
         }
 
         // Entry point used by an exact-version Unity batch invocation.
