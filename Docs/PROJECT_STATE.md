@@ -76,6 +76,14 @@ URP Rendering Layer `Cockpit` is index `8`, bit `0x00000100` (`256`). All 28 phy
 
 The existing VisionHUD `Canvas` now also owns `KartikarisHeadingElevationHUD`. Its heading source is the physical `Player` transform, never the cockpit look hierarchy or either camera. `Heading` and `Elevation` retain their original RectTransform layout and notch graphics and now have `RectMask2D` clipping. No second VisionHUD Canvas was created; the separate pre-existing `RadarCanvas` remains unchanged.
 
+### Optional portfolio photo session
+
+`Assets/Editor/KartikarisPortfolioPhotoSession.cs` provides an editor-only, opt-in workflow for KART-UNITY-PHOTO-001. It copies `Assets/Scenes/Kartikaris_MapTest.unity` to the isolated `Assets/Scenes/Kartikaris_PortfolioPhotoSession.unity` scene, then modifies only that copy. The generated fixture disables Player and MapGenerator gameplay MonoBehaviours, the Enemy root, cockpit, HUD, event system, original cameras, CharacterControllers, audio, Rigidbody motion/collision, and live particle emission. It keeps the real Player `Kartikaris Mech`, authored TerrainData with its approximately 25,000 tree instances, Directional Light, sky, shadows, and Global Volume available for rendering.
+
+The helper samples the existing Terrain for a relatively flat nearby clearing, grounds and freezes the real mech, evaluates the existing `cannon` Animator bool into a static deployed pose when available, and saves three disabled external cameras under `PhotoSession_STATIC_NON_HOSTILE`: `PhotoCamera_A_Hero`, `PhotoCamera_B_Environment`, and `PhotoCamera_C_Cannon`. Their transforms, FOVs, and the photo copy's mech/light settings are serialized for unhurried manual adjustment. The capture command renders those cameras to native `1600×900` PNG drafts in ignored local directory `Temp/PortfolioPhotoSession/`; it does not capture cockpit UI or layers 7–9.
+
+The photo-session scene and draft PNGs have not yet been generated. Exact Unity `6000.3.9f1` reached licensing on the available accelerated GPU but exited before project import because no valid Editor license was available. The authoritative `Kartikaris_MapTest.unity` remains unchanged.
+
 ## Implemented Systems
 
 ### Procedural terrain
@@ -310,6 +318,8 @@ The code-only impact-estimate follow-up built `Assembly-CSharp.csproj` with zero
 
 The cockpit lighting-isolation setup was validated statically without starting Unity. Installed URP 17.3 source confirmed the active pipeline's `m_SupportsLightLayers` setting and the modern light mask schema; Unity 6000.3.9f1 `binary2text` output for the imported model artifacts identified all 28 physical renderer component file IDs and their `m_RenderingLayerMask` property. Scene inspection confirmed Cockpit mask `256` on every identified renderer and the red Point Light, Default mask `1` on the Directional Light and representative exterior renderers, unchanged camera culling masks/GameObject layers/materials, and no blocker objects. `UnityYAMLMerge diff` parsed the scene against itself and exited successfully. Unity Editor, batch mode, Play Mode, and visual rendering were not run.
 
+The KART-UNITY-PHOTO-001 editor helper built through the generated `Assembly-CSharp-Editor.csproj` against the installed Unity `6000.3.9f1` assemblies with zero errors and one pre-existing Mirza Beig `DemoController.camera` warning; the temporary generated-project inclusion was removed afterward. An actual Unity GPU-render attempt was made with exact editor `6000.3.9f1`, X11, OpenGL, and the available Radeon RX 6700 XT, but Unity exited before asset import with `No valid Unity Editor license found`. Consequently no photo-session scene or screenshot was claimed or generated. The production scene SHA-256 remained `0fe661f1e541cdbc3419ceb00dc46c794121fa0c09f9a33e8f90d23363d5dbb4` after the attempt.
+
 ## Known Issues / Limitations
 
 - The ten Synty tree prefabs are ordinary mesh prefabs rather than SpeedTree assets. Unity may warn that their shaders are not `Nature/Soft Occlusion`; their working URP materials are intentionally unchanged.
@@ -347,7 +357,6 @@ The cockpit lighting-isolation setup was validated statically without starting U
 - Converted JMO WarFX effects preserve their authored material modes through one URP compatibility shader, but exact additive intensity, smoke multiplication, soft-particle intersections, lit decals, and scrolling appearance require a visual comparison in Game View. Soft particles require the active URP renderer/camera to provide a depth texture.
 - The original JMO legacy shader source files remain in the imported package for provenance but are unreferenced by the 130 audited materials; newly imported vendor materials can be upgraded through the Kartikaris VFX menu command.
 - HUD muzzle elevation assumes `firePoint.forward` is the true barrel direction. Incorrect fire-point orientation produces an incorrect display but no longer changes articulation.
-- Repository git metadata is unavailable in the current workspace, so status/diff must be inspected after functional git metadata is restored or mounted.
 
 ## Required Manual Weapon Setup
 

@@ -1,6 +1,6 @@
 # KART-UNITY-PHOTO-001 — Mech and forest portfolio photo session
 
-**Status:** ACTIVE — user approved the photo session and is ready to run Codex; **no screenshot captured yet**.
+**Status:** CAPTURE BLOCKED — the isolated editor helper is prepared, but exact Unity `6000.3.9f1` reports no valid Editor license before project import; **no screenshot has been captured**.
 **Source repository:** `Shikirashi/Kartikaris-Unity`, `main`.
 **Primary scene:** `Assets/Scenes/Kartikaris_MapTest.unity`.
 **Unity editor:** `6000.3.9f1` (Unity 6.3 LTS), from `ProjectSettings/ProjectVersion.txt`.
@@ -30,6 +30,35 @@ This is a **photo session**, not authorization to redesign the game's normal cam
    - **B. Scale:** slightly wider scenic angle showing terrain scale and tree density.
    - **C. Static silhouette:** mech safely posed with a readable cannon and forest background, with all simulation and hostile AI disabled in the isolated capture setup.
 5. No Inspector/scene changes in the authoritative scene without user approval. If an opt-in camera prefab, editor menu, runtime capture script or screenshot staging scene is implemented, keep it clearly isolated and disabled by default. Do not inadvertently capture the cockpit-only UI, radar Canvas, debug gizmos or editor toolbars over the exterior shot.
+
+## Prepared opt-in capture workflow
+
+`Assets/Editor/KartikarisPortfolioPhotoSession.cs` is the prepared editor-only helper. It never saves the authoritative `Kartikaris_MapTest.unity` scene. Its creation command copies that scene to `Assets/Scenes/Kartikaris_PortfolioPhotoSession.unity`, makes the copy static/non-hostile, and saves three disabled external cameras with their transforms and fields of view. The draft capture command renders real project assets to `Temp/PortfolioPhotoSession/` at native `1600×900`:
+
+- `kartikaris_hero_01.png` — camera A, prominent three-quarter mech composition.
+- `kartikaris_alt_01.png` — camera B, wider forest/terrain scale composition.
+- `kartikaris_alt_02.png` — camera C, alternate angle emphasizing the deployed cannon silhouette.
+
+After activating a valid Unity Editor license, perform the initial setup with exact Unity `6000.3.9f1`:
+
+1. Open this project in Unity `6000.3.9f1`; decline any upgrade prompt from another version.
+2. Choose **Kartikaris > Portfolio Photo Session > Create or Refresh Static Scene**. This creates/recreates only the isolated photo scene.
+3. Open `Assets/Scenes/Kartikaris_PortfolioPhotoSession.unity` and verify the `PhotoSession_STATIC_NON_HOSTILE` root, inactive Enemy/cockpit/Canvas, disabled gameplay components, stationary Player mech, Terrain/forest, Directional Light, and the three saved photo cameras.
+4. Select each camera and use its Camera Preview to adjust framing if desired. Save the isolated photo scene; do not run Play Mode and do not modify `Kartikaris_MapTest.unity`.
+5. Choose **Kartikaris > Portfolio Photo Session > Capture 1600x900 Drafts**. Review the three PNGs in `Temp/PortfolioPhotoSession/`.
+
+For a fully automated initial build and capture after licensing, close other Unity instances and run:
+
+```bash
+/home/shiki/Unity/Hub/Editor/6000.3.9f1/Editor/Unity \
+  -batchmode \
+  -projectPath /home/shiki/Documents/GitHub/Kartikaris-Unity \
+  -executeMethod Kartikaris.Editor.KartikarisPortfolioPhotoSession.BuildAndCaptureDrafts \
+  -force-glcore \
+  -logFile /tmp/kartikaris-photo-session.log
+```
+
+The automated entry point recreates the isolated scene, so use the menu-only capture command after making manual camera adjustments.
 
 ## Pass 2 — Human visual direction
 - User selects A/B/C or opens Unity and takes a low-resolution manual screenshot showing the desired camera angle/model placement.
