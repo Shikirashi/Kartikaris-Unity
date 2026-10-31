@@ -1,6 +1,6 @@
 # KART-UNITY-PHOTO-001 — Mech and forest portfolio photo session
 
-**Status:** ALT 2 VARIANT DRAFTS CAPTURED — stable isolated scene, initial candidates, and six cannon-focused Unity `6000.3.9f1` outputs are ready for external visual review.
+**Status:** SOURCE REVIEW PASSED; HUMAN VISUAL QA PENDING — six cannon-variant captures reported at 1600×900 on `e978e90`, but folded-vs-unfolded appearance not independently verified. No final image approved.
 **Source repository:** `Shikirashi/Kartikaris-Unity`, `main`.
 **Primary scene:** `Assets/Scenes/Kartikaris_MapTest.unity`.
 **Unity editor:** `6000.3.9f1` (Unity 6.3 LTS), from `ProjectSettings/ProjectVersion.txt`.
@@ -113,6 +113,13 @@ All outputs are native `1600×900` PNGs under ignored local directory `Portfolio
 | `kartikaris_alt2_unfolded_elev84_az-12.png` | Deployed orientation candidate | `(-32.490, 46.210, -76.946)` | `(3.462, 180.447, 0)` | `34°` | Heading `-12°`, elevation-pivot offset `+6°` |
 
 The CLI reported successful rendering and the dimensions above. At the user's request, Codex stopped visually interpreting the images; a separate ChatGPT image review will determine whether each filename's intended cannon state is actually visible and provide concrete follow-up instructions. In particular, treat the two `folded` filenames as **unconfirmed**, not approved, until that review. No image has been published.
+
+## ChatGPT push review — 1 November 2026 (e978e90)
+
+- Confirmed commit `e978e9037bbbf0c85d0a1c6d33b47591fda8eb37` exists on `main` and contains scoped changes to the capture helper, task/project-state docs and new implementation report.
+- Reviewed source: the helper captures deployed candidates from the anchor scene; the folded attempt reopens the isolated photo scene and uses `PoseCannon(mechVisual, false)` (Animator `cannon=false`, `Animator.Update` then disabled). This is not conclusive visual proof of folded articulation; scene-session/animation cache uncertainty remains.
+- Codex documentation reports exact Unity 6000.3.9f1 exit code 0 and six local ignored 1600×900 PNG files. These are **reported results, not independent execution or pixel inspection** by ChatGPT; ignored files do not travel with the Git push.
+- **Next gate:** user uploads all six local PNGs or a sufficiently clear labeled contact sheet for image review. Especially compare the two `folded` files against `unfolded_01`. If folded pose is unchanged, task remains open for a focused animation-state correction or manual posing. No portfolio publication until visual approval.
 
 ## Pass 2 — Human visual direction
 - User selects A/B/C or opens Unity and takes a low-resolution manual screenshot showing the desired camera angle/model placement.
