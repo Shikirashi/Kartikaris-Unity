@@ -1,0 +1,141 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!319 &31900000
+AvatarMask:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Kartikaris_Antenna
+  m_Mask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+  m_Elements:
+  - m_Path: 
+    m_Weight: 1
+  - m_Path: antenna dish
+    m_Weight: 1
+  - m_Path: arm.upper.l
+    m_Weight: 0
+  - m_Path: arm.upper.r
+    m_Weight: 0
+  - m_Path: Armature
+    m_Weight: 0
+  - m_Path: Armature/root
+    m_Weight: 0
+  - m_Path: Armature/root/waist
+    m_Weight: 0
+  - m_Path: Armature/root/waist/hip.l
+    m_Weight: 0
+  - m_Path: Armature/root/waist/hip.l/leg.l
+    m_Weight: 0
+  - m_Path: Armature/root/waist/hip.l/leg.l/shin.l
+    m_Weight: 0
+  - m_Path: Armature/root/waist/hip.l/leg.l/shin.l/foot.l
+    m_Weight: 0
+  - m_Path: Armature/root/waist/hip.l/leg.l/shin.l/foot.l/foot.toe.1.l
+    m_Weight: 0
+  - m_Path: Armature/root/waist/hip.l/leg.l/shin.l/foot.l/foot.toe.2.l
+    m_Weight: 0
+  - m_Path: Armature/root/waist/hip.l/leg.l/shin.l/foot.l/foot.toe.3.l
+    m_Weight: 0
+  - m_Path: Armature/root/waist/hip.r
+    m_Weight: 0
+  - m_Path: Armature/root/waist/hip.r/leg.r
+    m_Weight: 0
+  - m_Path: Armature/root/waist/hip.r/leg.r/shin.r
+    m_Weight: 0
+  - m_Path: Armature/root/waist/hip.r/leg.r/shin.r/foot.r
+    m_Weight: 0
+  - m_Path: Armature/root/waist/hip.r/leg.r/shin.r/foot.r/foot.toe.1.r
+    m_Weight: 0
+  - m_Path: Armature/root/waist/hip.r/leg.r/shin.r/foot.r/foot.toe.2.r
+    m_Weight: 0
+  - m_Path: Armature/root/waist/hip.r/leg.r/shin.r/foot.r/foot.toe.3.r
+    m_Weight: 0
+  - m_Path: Armature/root/waist/torso
+    m_Weight: 0
+  - m_Path: Armature/root/waist/torso/antenna.dish
+    m_Weight: 0
+  - m_Path: Armature/root/waist/torso/cannon.1
+    m_Weight: 0
+  - m_Path: Armature/root/waist/torso/cannon.1/cannon.2
+    m_Weight: 0
+  - m_Path: Armature/root/waist/torso/cannon.1/cannon.2/firePoint
+    m_Weight: 0
+  - m_Path: Armature/root/waist/torso/head
+    m_Weight: 0
+  - m_Path: Armature/root/waist/torso/shoulder.link.L
+    m_Weight: 0
+  - m_Path: Armature/root/waist/torso/shoulder.link.L/arm.upper.l
+    m_Weight: 0
+  - m_Path: Armature/root/waist/torso/shoulder.link.L/arm.upper.l/forearm.l
+    m_Weight: 0
+  - m_Path: Armature/root/waist/torso/shoulder.link.L/arm.upper.l/forearm.l/hand.l
+    m_Weight: 0
+  - m_Path: Armature/root/waist/torso/shoulder.link.L/shoulder.L
+    m_Weight: 0
+  - m_Path: Armature/root/waist/torso/shoulder.link.R
+    m_Weight: 0
+  - m_Path: Armature/root/waist/torso/shoulder.link.R/arm.upper.r
+    m_Weight: 0
+  - m_Path: Armature/root/waist/torso/shoulder.link.R/arm.upper.r/forearm.r
+    m_Weight: 0
+  - m_Path: Armature/root/waist/torso/shoulder.link.R/arm.upper.r/forearm.r/hand.r
+    m_Weight: 0
+  - m_Path: Armature/root/waist/torso/shoulder.link.R/shoulder.R
+    m_Weight: 0
+  - m_Path: cannon.1
+    m_Weight: 0
+  - m_Path: cannon.2
+    m_Weight: 0
+  - m_Path: foot.l
+    m_Weight: 0
+  - m_Path: foot.r
+    m_Weight: 0
+  - m_Path: foot.toe.1.l
+    m_Weight: 0
+  - m_Path: foot.toe.1.r
+    m_Weight: 0
+  - m_Path: foot.toe.2.l
+    m_Weight: 0
+  - m_Path: foot.toe.2.r
+    m_Weight: 0
+  - m_Path: foot.toe.3.l
+    m_Weight: 0
+  - m_Path: foot.toe.3.r
+    m_Weight: 0
+  - m_Path: forearm.l
+    m_Weight: 0
+  - m_Path: forearm.r
+    m_Weight: 0
+  - m_Path: hand.l
+    m_Weight: 0
+  - m_Path: hand.r
+    m_Weight: 0
+  - m_Path: head
+    m_Weight: 0
+  - m_Path: leg.l
+    m_Weight: 0
+  - m_Path: leg.r
+    m_Weight: 0
+  - m_Path: module.cover.l
+    m_Weight: 0
+  - m_Path: module.cover.r
+    m_Weight: 0
+  - m_Path: neck
+    m_Weight: 0
+  - m_Path: shin.l
+    m_Weight: 0
+  - m_Path: shin.r
+    m_Weight: 0
+  - m_Path: shoulder.l
+    m_Weight: 0
+  - m_Path: shoulder.link.l
+    m_Weight: 0
+  - m_Path: shoulder.link.r
+    m_Weight: 0
+  - m_Path: shoulder.r
+    m_Weight: 0
+  - m_Path: torso
+    m_Weight: 0
+  - m_Path: waist
+    m_Weight: 0
