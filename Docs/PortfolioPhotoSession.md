@@ -1,6 +1,6 @@
 # KART-UNITY-PHOTO-001 — Mech and forest portfolio photo session
 
-**Status:** SOURCE REVIEW PASSED; HUMAN VISUAL QA PENDING — six cannon-variant captures reported at 1600×900 on `e978e90`, but folded-vs-unfolded appearance not independently verified. No final image approved.
+**Status:** TWO IMAGES USER-APPROVED; OPTIONAL THIRD 30° CANNON SHOT REQUESTED — existing `kartikaris_alt2_unfolded_02.png` (upright deployed) and `kartikaris_alt2_folded_02.png` (folded) are selected for public gallery. Exact local captures are ignored and must still be transferred as approved assets; publication is not yet complete.
 **Source repository:** `Shikirashi/Kartikaris-Unity`, `main`.
 **Primary scene:** `Assets/Scenes/Kartikaris_MapTest.unity`.
 **Unity editor:** `6000.3.9f1` (Unity 6.3 LTS), from `ProjectSettings/ProjectVersion.txt`.
@@ -120,6 +120,24 @@ The CLI reported successful rendering and the dimensions above. At the user's re
 - Reviewed source: the helper captures deployed candidates from the anchor scene; the folded attempt reopens the isolated photo scene and uses `PoseCannon(mechVisual, false)` (Animator `cannon=false`, `Animator.Update` then disabled). This is not conclusive visual proof of folded articulation; scene-session/animation cache uncertainty remains.
 - Codex documentation reports exact Unity 6000.3.9f1 exit code 0 and six local ignored 1600×900 PNG files. These are **reported results, not independent execution or pixel inspection** by ChatGPT; ignored files do not travel with the Git push.
 - **Next gate:** user uploads all six local PNGs or a sufficiently clear labeled contact sheet for image review. Especially compare the two `folded` files against `unfolded_01`. If folded pose is unchanged, task remains open for a focused animation-state correction or manual posing. No portfolio publication until visual approval.
+
+## Approved two-image gallery selection + optional 30° deployed image — 1 November 2026
+
+The user explicitly approved **both of the images most recently shared** as portfolio images:
+- `kartikaris_alt2_unfolded_02.png` — **deployed/upright cannon**, alternative camera, first screenshot in the user's pair. This is NOT the folded shot.
+- `kartikaris_alt2_folded_02.png` — **folded/travel cannon**, alternate camera, second screenshot in the user's pair.
+
+Preserve both in the portfolio gallery. They are complementary, not a hidden backup. Do not overwrite either original. Gallery should show two visible inline photographs with meaningful captions, no hover or click required. Source image files are currently **local and Git-ignored**; this documentation update alone does not publish the images.
+
+### Additional requested static photo (not yet captured)
+- Create **one** new screenshot `kartikaris_alt2_unfolded_30deg.png` from the **same camera framing as `kartikaris_alt2_unfolded_02.png`** (its alternative camera transform/FOV), with the deployed cannon at **physical elevation 30° above the horizontal**, not 30° from vertical.
+- Actual articulation **is procedural**, once the deployment animation is complete. Verified in `Assets/Scripts/Combat/KartikarisCannonWeapon.cs`: `ElevationOffsetFromPhysicalDegrees(physicalElevationDegrees)` is `90f - physicalElevationDegrees`, so 30° elevation corresponds to **+60° pivot offset from the deployed vertical animation base pose** on `weapon.ElevationPivot` using `weapon.ElevationAxis`. Existing `+12°` and `+6°` offsets correspond to approximately 78° and 84° physical elevation, respectively.
+- Preserve the deployed animation pose; **do not** attempt to play the fold animation to lower the cannon. Do not alter runtime `KartikarisCannonWeapon` gameplay code or aim limits just for the picture.
+- For the **30° image**, first restore known deployed pivot rotations, then apply the calculated +60° procedural offset **once**, rather than accumulating on earlier variants. Read the existing helper `ApplyStaticCannonOffset`. Verify actual muzzle elevation in world coordinates by inspecting `FirePoint.forward` and using the horizontal/reference up normal, since local pivot orientation or nested hierarchy could change the sign. Validate and report whether measured angle is close to 30°, adjust the photo-only stage if needed. Avoid unnatural intersections between cannon/mech.
+- The image must remain completely **static, non-hostile**, with the mech and existing forest, no firing, AI, or timed state changes. Use Unity `6000.3.9f1`, genuine native 1600×900 rendering, and **capture/inspect the image first** before reporting visual success.
+- Preserve already-selected images, original capture filenames and photo scene, original `Kartikaris_MapTest.unity`, and `Assets/New Terrain.asset`. Changes must be limited to isolated editor photo capture tooling and the project task/report documentation. Stop for human visual review of this third candidate; no publication without the site's Gallery task.
+
+**Codex instruction:** Work in `Shikirashi/Kartikaris-Unity` on `main`. Read `AGENTS.md`, `Docs/PROJECT_STATE.md`, and this photo task. Extend the existing opt-in editor capture helper to render a single deployed cannon at exactly 30° physical elevation from horizontal using procedural pivot articulation. Reuse the `alt2_unfolded_02` camera; do not overwrite the six old PNGs; output `kartikaris_alt2_unfolded_30deg.png`, report measured muzzle angle and capture evidence, follow project-state/implementation-report workflow, commit and push only scoped code/docs, and stop for human review.
 
 ## Pass 2 — Human visual direction
 - User selects A/B/C or opens Unity and takes a low-resolution manual screenshot showing the desired camera angle/model placement.
