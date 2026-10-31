@@ -6,6 +6,18 @@
 **Unity editor:** `6000.3.9f1` (Unity 6.3 LTS), from `ProjectSettings/ProjectVersion.txt`.
 **Relevant project state:** `Docs/PROJECT_STATE.md`, `AGENTS.md`.
 
+
+## Mandatory Git-tracked screenshot review handoff — updated 1 November 2026
+
+**The user's approved workflow has changed:** Codex must **push the screenshot images themselves** with the scoped photo-session commit so ChatGPT can inspect the genuine output via GitHub without manual file uploads. Do not leave *all* images Git-ignored. Screenshots remain **DRAFT/UNAPPROVED** until the user reviews them.
+
+1. Keep large original renders in their existing local capture folder, ignored if appropriate. For each requested candidate, create a **small, visually faithful review copy** inside a tracked repo directory (suggest `docs/portfolio/review/`, or `docs/portfolio/review/<task-id>/` if necessary). Prefer **JPG or WebP at real 1280×720–1920×1080 resolution, quality approximately 85–92**; PNG is fine when small (especially flat-color 2D). Retain aspect ratio and actual gameplay pixels. No AI upscaling, filters, synthetic content, drawn labels, or replacements.
+2. Commit/push the **2–4 chosen preview binaries plus scripts/docs** in the same repo and branch. They must appear on GitHub at normal clickable blob/raw URLs, not just an ignored local path or a Markdown filename. Do NOT commit hundreds of frames, videos, caches, game build binaries, high-resolution raw archives, or unrelated work. If repo policy or storage limits make the PNG too large, use a compressed review derivative, not git-lfs-only inaccessible images.
+3. Codex's responsibility for image QA is **mechanical only**: confirm file exists, can be decoded, sensible dimensions/aspect ratio, no zero-byte/blank capture, expected filenames, clean commit, and GitHub-visible tracked path. **Do not spend agent usage studying screenshots, interpreting artistic quality, comparing composition, scoring visuals, or selecting a hero. ChatGPT and the user perform subjective image review directly from pushed files.**
+4. Report source render path, pushed preview path, native/review dimensions and commit SHA. Never mark a screenshot "approved" or deploy it on the portfolio site until the user explicitly chooses it. Only publish game shots safe for a public repository (no secrets/personal data/proprietary material).
+5. When adding review screenshots later, overwrite or remove obsolete **review derivatives** only after preserving the underlying local originals and recording the change; do not rewrite gameplay. Preserve existing active mailbox restrictions — a queued task does not become active merely because this handoff rule is updated.
+
+
 ## Photo-session operating rule (updated 1 November 2026)
 
 **Everything needed for the photograph must be arranged STATIC and NON-HOSTILE before capture.** Codex must prepare the scene and **take the first 2–3 screenshots**, not ask the user to time actions. Disable enemy behavior, firing, artillery, tree destruction and live actor movement for the isolated photo fixture. Freeze mech pose/camera/forest and any non-interactive visual effects so the user can inspect and reposition the camera for as long as desired. Existing mech/enemy visuals may serve as stationary props, but not active opponents. Do not globally pause a rendering pipeline that hides forest, VFX or cameras; make an explicit opt-in stage isolated from play. If no graphical Unity session is available, report capture BLOCKED and provide manual static staging steps. Preserve gameplay and original scene. Only use real project assets; no fabricated effects.
